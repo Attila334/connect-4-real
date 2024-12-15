@@ -1,82 +1,70 @@
 package com.example;
 
-import java.util.Random;
-import java.util.Scanner;
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.*;
 
-record Jatekos(char szimbolum, String nev) {
-}
+class Connect4 {
 
-public class Connect4 {
-    private static final int SOROK = 6;
-    private static final int OSZLOPOK = 7;
-    private static final char URES = '.';
-    private final char[][] tabla = new char[SOROK][OSZLOPOK];
-    private final Jatekos jatekos;
-    private final Jatekos ai;
+    private final char[][] tabla;
 
     public Connect4() {
-        jatekos = new Jatekos('P', "Játékos");
-        ai = new Jatekos('S', "AI");
-
-        for (int i = 0; i < SOROK; i++) {
-            for (int j = 0; j < OSZLOPOK; j++) {
-                tabla[i][j] = URES;
+        tabla = new char[6][7];
+        for (int i = 0; i < 6; i++) {
+            for (int j = 0; j < 7; j++) {
+                tabla[i][j] = '.';
             }
         }
     }
 
-    public void tablaKiir() {
-        for (int i = 0; i < SOROK; i++) {
-            for (int j = 0; j < OSZLOPOK; j++) {
-                System.out.print(tabla[i][j] + " ");
-            }
-            System.out.println();
-        }
+    public char[][] getTabla() {
+        return tabla;
     }
 
-    public boolean korongLetesz(int oszlop, char jatekosSzimbolum) {
-        if (oszlop < 0 || oszlop >= OSZLOPOK || tabla[0][oszlop] != URES) {
+    public boolean korongLetesz(int oszlop, char jatekos) {
+        if (oszlop < 0 || oszlop >= 7) {
             return false;
         }
-
-        for (int i = SOROK - 1; i >= 0; i--) {
-            if (tabla[i][oszlop] == URES) {
-                tabla[i][oszlop] = jatekosSzimbolum;
+        for (int i = 5; i >= 0; i--) {
+            if (tabla[i][oszlop] == '.') {
+                tabla[i][oszlop] = jatekos;
                 return true;
             }
         }
         return false;
     }
 
-    public boolean ellenorizNyeres(char jatekosSzimbolum) {
-        // Vízszintes, függőleges és átlós nyerés ellenőrzése
-        for (int i = 0; i < SOROK; i++) {
-            for (int j = 0; j < OSZLOPOK - 3; j++) {
-                if (tabla[i][j] == jatekosSzimbolum && tabla[i][j + 1] == jatekosSzimbolum && tabla[i][j + 2] == jatekosSzimbolum && tabla[i][j + 3] == jatekosSzimbolum) {
+    public boolean ellenorizNyeres(char jatekos) {
+        for (int i = 0; i < 6; i++) {
+            for (int j = 0; j < 4; j++) {
+                if (tabla[i][j] == jatekos && tabla[i][j + 1] == jatekos &&
+                        tabla[i][j + 2] == jatekos && tabla[i][j + 3] == jatekos) {
                     return true;
                 }
             }
         }
 
-        for (int i = 0; i < SOROK - 3; i++) {
-            for (int j = 0; j < OSZLOPOK; j++) {
-                if (tabla[i][j] == jatekosSzimbolum && tabla[i + 1][j] == jatekosSzimbolum && tabla[i + 2][j] == jatekosSzimbolum && tabla[i + 3][j] == jatekosSzimbolum) {
+        for (int j = 0; j < 7; j++) {
+            for (int i = 0; i < 3; i++) {
+                if (tabla[i][j] == jatekos && tabla[i + 1][j] == jatekos &&
+                        tabla[i + 2][j] == jatekos && tabla[i + 3][j] == jatekos) {
                     return true;
                 }
             }
         }
 
-        for (int i = 0; i < SOROK - 3; i++) {
-            for (int j = 0; j < OSZLOPOK - 3; j++) {
-                if (tabla[i][j] == jatekosSzimbolum && tabla[i + 1][j + 1] == jatekosSzimbolum && tabla[i + 2][j + 2] == jatekosSzimbolum && tabla[i + 3][j + 3] == jatekosSzimbolum) {
+        for (int i = 0; i < 3; i++) {
+            for (int j = 0; j < 4; j++) {
+                if (tabla[i][j] == jatekos && tabla[i + 1][j + 1] == jatekos &&
+                        tabla[i + 2][j + 2] == jatekos && tabla[i + 3][j + 3] == jatekos) {
                     return true;
                 }
             }
         }
 
-        for (int i = 0; i < SOROK - 3; i++) {
-            for (int j = 3; j < OSZLOPOK; j++) {
-                if (tabla[i][j] == jatekosSzimbolum && tabla[i + 1][j - 1] == jatekosSzimbolum && tabla[i + 2][j - 2] == jatekosSzimbolum && tabla[i + 3][j - 3] == jatekosSzimbolum) {
+        for (int i = 0; i < 3; i++) {
+            for (int j = 3; j < 7; j++) {
+                if (tabla[i][j] == jatekos && tabla[i + 1][j - 1] == jatekos &&
+                        tabla[i + 2][j - 2] == jatekos && tabla[i + 3][j - 3] == jatekos) {
                     return true;
                 }
             }
@@ -86,8 +74,8 @@ public class Connect4 {
     }
 
     public boolean teleAVanATabla() {
-        for (int j = 0; j < OSZLOPOK; j++) {
-            if (tabla[0][j] == URES) {
+        for (int j = 0; j < 7; j++) {
+            if (tabla[0][j] == '.') {
                 return false;
             }
         }
@@ -95,53 +83,120 @@ public class Connect4 {
     }
 
     public int aiLepes() {
-        Random veletlen = new Random();
-        int oszlop;
-        do {
-            oszlop = veletlen.nextInt(OSZLOPOK);
-        } while (!korongLetesz(oszlop, ai.szimbolum()));
-        return oszlop;
-    }
-
-    public static void main(String[] args) {
-        Connect4 jatek = new Connect4();
-        Scanner scanner = new Scanner(System.in);
-        boolean nyertValaki = false;
-        char aktualisJatekosSzimbolum = jatek.jatekos.szimbolum();
-
-        System.out.println("Üdvözöl a Connect 4 játék!");
-        jatek.tablaKiir();
-
-        while (!nyertValaki && !jatek.teleAVanATabla()) {
-            if (aktualisJatekosSzimbolum == jatek.jatekos.szimbolum()) {
-                System.out.println("Te jössz! Adj meg egy oszlopot (0-6): ");
-                int oszlop = scanner.nextInt();
-                if (jatek.korongLetesz(oszlop, aktualisJatekosSzimbolum)) {
-                    jatek.tablaKiir();
-                    if (jatek.ellenorizNyeres(aktualisJatekosSzimbolum)) {
-                        System.out.println("Nyertél!");
-                        nyertValaki = true;
-                    } else {
-                        aktualisJatekosSzimbolum = jatek.ai.szimbolum();
-                    }
-                }
-            } else {
-                System.out.println("AI jön...");
-                int aiOszlop = jatek.aiLepes();
-                jatek.tablaKiir();
-                System.out.println("AI az oszlopot választotta: " + aiOszlop);
-                if (jatek.ellenorizNyeres(aktualisJatekosSzimbolum)) {
-                    System.out.println("AI nyert!");
-                    nyertValaki = true;
-                } else {
-                    aktualisJatekosSzimbolum = jatek.jatekos.szimbolum();
-                }
+        for (int j = 0; j < 7; j++) {
+            if (korongLetesz(j, 'S')) {
+                return j;
             }
         }
-
-        if (!nyertValaki) {
-            System.out.println("Döntetlen! A tábla tele van.");
-        }
+        return -1; // Nem tudott lépni, mert tele a tábla
     }
 }
-# connect-4-real
+
+class Connect4Test {
+
+    @Test
+    void testTablaInicializalas() {
+        Connect4 game = new Connect4();
+        for (int i = 0; i < 6; i++) {
+            for (int j = 0; j < 7; j++) {
+                assertEquals('.', game.getTabla()[i][j], "A tábla nem megfelelően inicializálódott.");
+            }
+        }
+    }
+
+    @Test
+    void testKorongLetesz_ValidColumn() {
+        Connect4 game = new Connect4();
+        assertTrue(game.korongLetesz(0, 'P'));
+        assertTrue(game.korongLetesz(6, 'P'));
+    }
+
+    @Test
+    void testKorongLetesz_InvalidColumn() {
+        Connect4 game = new Connect4();
+        assertFalse(game.korongLetesz(-1, 'P'));
+        assertFalse(game.korongLetesz(7, 'P'));
+    }
+
+    @Test
+    void testKorongLetesz_ColumnFull() {
+        Connect4 game = new Connect4();
+        for (int i = 0; i < 6; i++) {
+            assertTrue(game.korongLetesz(0, 'P'));
+        }
+        assertFalse(game.korongLetesz(0, 'P'));
+    }
+
+    @Test
+    void testEllenorizNyeres_Vizszintes() {
+        Connect4 game = new Connect4();
+        game.korongLetesz(0, 'P');
+        game.korongLetesz(1, 'P');
+        game.korongLetesz(2, 'P');
+        game.korongLetesz(3, 'P');
+        assertTrue(game.ellenorizNyeres('P'));
+    }
+
+    @Test
+    void testEllenorizNyeres_Fuggoleges() {
+        Connect4 game = new Connect4();
+        for (int i = 0; i < 4; i++) {
+            game.korongLetesz(0, 'P');
+        }
+        assertTrue(game.ellenorizNyeres('P'));
+    }
+
+    @Test
+    void testEllenorizNyeres_Atlos() {
+        Connect4 game = new Connect4();
+        game.korongLetesz(0, 'P');
+        game.korongLetesz(1, 'S');
+        game.korongLetesz(1, 'P');
+        game.korongLetesz(2, 'S');
+        game.korongLetesz(2, 'S');
+        game.korongLetesz(2, 'P');
+        game.korongLetesz(3, 'S');
+        game.korongLetesz(3, 'S');
+        game.korongLetesz(3, 'S');
+        game.korongLetesz(3, 'P');
+        assertTrue(game.ellenorizNyeres('P'));
+    }
+
+    @Test
+    void testTeleAVanATabla() {
+        Connect4 game = new Connect4();
+        for (int col = 0; col < 7; col++) {
+            for (int row = 0; row < 6; row++) {
+                game.korongLetesz(col, 'P');
+            }
+        }
+        assertTrue(game.teleAVanATabla());
+    }
+
+    @Test
+    void testAiLepes() {
+        Connect4 game = new Connect4();
+        int oszlop = game.aiLepes();
+        assertTrue(oszlop >= 0 && oszlop < 7, "Az AI lépése kívül esik a megengedett tartományon.");
+        assertEquals('S', game.getTabla()[5][oszlop], "Az AI lépése nem történt meg helyesen a táblán.");
+    }
+
+    @Test
+    void testTeljesJatek() {
+        Connect4 game = new Connect4();
+
+        game.korongLetesz(0, 'P');
+        game.korongLetesz(1, 'P');
+        game.korongLetesz(2, 'P');
+        game.korongLetesz(3, 'P');
+
+        assertTrue(game.ellenorizNyeres('P'), "A játékosnak nyernie kellett volna a vízszintes sorral.");
+
+        for (int i = 0; i < 6; i++) {
+            for (int j = 0; j < 7; j++) {
+                game.korongLetesz(j, 'S');
+            }
+        }
+        assertTrue(game.teleAVanATabla(), "A táblának teljesen megtelt állapotban kellene lennie.");
+    }
+}
