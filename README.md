@@ -88,7 +88,7 @@ class Connect4 {
                 return j;
             }
         }
-        return -1; // Nem tudott lépni, mert tele a tábla
+        return -1
     }
 }
 
@@ -99,7 +99,7 @@ class Connect4Test {
         Connect4 game = new Connect4();
         for (int i = 0; i < 6; i++) {
             for (int j = 0; j < 7; j++) {
-                assertEquals('.', game.getTabla()[i][j], "A tábla nem megfelelően inicializálódott.");
+                assertEquals('.', game.getTabla()[i][j], 
             }
         }
     }
@@ -177,8 +177,8 @@ class Connect4Test {
     void testAiLepes() {
         Connect4 game = new Connect4();
         int oszlop = game.aiLepes();
-        assertTrue(oszlop >= 0 && oszlop < 7, "Az AI lépése kívül esik a megengedett tartományon.");
-        assertEquals('S', game.getTabla()[5][oszlop], "Az AI lépése nem történt meg helyesen a táblán.");
+        assertTrue(oszlop >= 0 && oszlop < 7, 
+        assertEquals('S', game.getTabla()[5][oszlop],
     }
 
     @Test
@@ -190,13 +190,13 @@ class Connect4Test {
         game.korongLetesz(2, 'P');
         game.korongLetesz(3, 'P');
 
-        assertTrue(game.ellenorizNyeres('P'), "A játékosnak nyernie kellett volna a vízszintes sorral.");
+        assertTrue(game.ellenorizNyeres('P'), 
 
         for (int i = 0; i < 6; i++) {
             for (int j = 0; j < 7; j++) {
                 game.korongLetesz(j, 'S');
             }
         }
-        assertTrue(game.teleAVanATabla(), "A táblának teljesen megtelt állapotban kellene lennie.");
+        assertTrue(game.teleAVanATabla(), 
     }
 }
