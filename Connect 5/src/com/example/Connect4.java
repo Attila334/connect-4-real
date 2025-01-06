@@ -6,7 +6,7 @@ import java.util.Scanner;
 record Jatekos(char szimbolum, String nev) {
 }
 
-public class Connect4 {
+class Connect4 {
     private static final int SOROK = 6;
     private static final int OSZLOPOK = 7;
     private static final char URES = '.';
@@ -49,7 +49,6 @@ public class Connect4 {
     }
 
     public boolean ellenorizNyeres(char jatekosSzimbolum) {
-        // Vízszintes, függőleges és átlós nyerés ellenőrzése
         for (int i = 0; i < SOROK; i++) {
             for (int j = 0; j < OSZLOPOK - 3; j++) {
                 if (tabla[i][j] == jatekosSzimbolum && tabla[i][j + 1] == jatekosSzimbolum && tabla[i][j + 2] == jatekosSzimbolum && tabla[i][j + 3] == jatekosSzimbolum) {
@@ -138,7 +137,6 @@ public class Connect4 {
                 }
             }
         }
-
         if (!nyertValaki) {
             System.out.println("Döntetlen! A tábla tele van.");
         }
